@@ -1,8 +1,10 @@
 import requests
 import json
+import time
 from bs4 import BeautifulSoup
 
-if __name__ == '__main__':
+
+def get_share_price_by_date(start_date, end_date):
     headers = {
         'content-length': '192',
         'content-type': 'application/x-www-form-urlencoded',
@@ -13,8 +15,8 @@ if __name__ == '__main__':
         'curr_id': '6408',
         'smlID': '1159963',
         'header': 'AAPL历史数据',
-        'st_date': '2021/01/26',
-        'end_date': '2022/01/25',
+        'st_date': start_date,
+        'end_date': end_date,
         'interval_sec': 'Weekly',
         'sort_col': 'date',
         'sort_ord': 'DESC',
@@ -30,10 +32,15 @@ if __name__ == '__main__':
     keys = trs[0].find_all('th')
     
     check_list = []
-    for tr in trs:
+    for j, tr in enumerate(trs):
+        if (j == 0):
+            continue
         tds = tr.find_all('td')
         dist = {}
         for index, td in enumerate(tds):
             dist[keys[index].text] = td.text
         check_list.append(dist)
-    print(json.dumps(check_list))
+    return json.dumps(check_list)
+    
+if __name__ == "__main__":
+    print(get_share_price_by_date('2021/01/26', '2022/01/25'))
